@@ -94,11 +94,44 @@
     mode=644
   notify: restart splunkforwarder
 
-- name: create outputs config file
+- name: Make sure necessary dirs exist
+  file:
+    path: "{{ item }}"
+    owner: splunk
+    group: splunk
+    state: directory
+  with_items:
+    - "{{ splunkforwarder_output_dir }}/{{ splunkforwarder_ssl_cert_path }}"
+    - /opt/splunkforwarder/etc/system/local
+
+- name: Write SSL certs to disk
+  copy:
+    dest: "{{ splunkforwarder_output_dir }}/{{ splunkforwarder_ssl_cert_path }}/{{ item.target_group }}.pem"
+    content: "{{ item.ssl_cert }}"
+    owner: splunk
+    group: splunk
+    mode: "0400"
+  when: "{{ item.ssl_cert is defined }}"
+  with_items: SPLUNKFORWARDER_SERVERS
+
+- name: Write root CA to disk
+  copy:
+    dest: "{{ splunkforwarder_output_dir }}/{{ splunkforwarder_ssl_cert_path }}/{{ item.target_group }}-rootca.pem"
+    content: "{{ item.ssl_root_ca }}"
+    owner: splunk
+    group: splunk
+    mode: "0400"
+  when: "{{ item.ssl_cert is defined }}"
+  with_items: SPLUNKFORWARDER_SERVERS
+
+- name: Create inputs and outputs configuration
   template:
-    src=opt/splunkforwarder/etc/system/local/outputs.conf.j2
-    dest=/opt/splunkforwarder/etc/system/local/outputs.conf
-    owner=splunk
-    group=splunk
-    mode=644
+    src: "opt/splunkforwarder/etc/system/local/{{ item }}.conf.j2"
+    dest: "/opt/splunkforwarder/etc/system/local/{{ item }}.conf"
+    owner: splunk
+    group: splunk
+    mode: "0644"
+  with_items:
+    - inputs
+    - outputs
   notify: restart splunkforwarder
