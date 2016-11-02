@@ -32,7 +32,7 @@ hadoop_common_temporary_dir: /var/tmp
 hadoop_common_dist:
   filename: "hadoop-{{ HADOOP_COMMON_VERSION }}.tar.gz"
   url: "https://archive.apache.org/dist/hadoop/core/hadoop-{{ HADOOP_COMMON_VERSION }}/hadoop-{{ HADOOP_COMMON_VERSION }}.tar.gz"
-  sha256sum: 227785DC6E3E6EF8CFD64393B305D09078A209703C9C01910A1BDDCF86BE3054
+  sha256sum: D489DF3808244B906EB38F4D081BA49E50C4603DB03EFD5E594A1E98B09259C2
 hadoop_common_protobuf_dist:
   filename: "protobuf-{{ HADOOP_COMMON_PROTOBUF_VERSION }}.tar.gz"
   url: "https://github.com/google/protobuf/releases/download/v{{ HADOOP_COMMON_PROTOBUF_VERSION }}/protobuf-{{ HADOOP_COMMON_PROTOBUF_VERSION }}.tar.gz"
