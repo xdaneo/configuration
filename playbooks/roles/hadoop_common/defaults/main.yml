@@ -41,7 +41,7 @@ hadoop_common_protobuf_dist:
 
 hadoop_common_native_dist:
   filename: "hadoop-{{ HADOOP_COMMON_VERSION }}-src.tar.gz"
-  url: "https://archive.apache.org/dist/hadoop/common/hadoop-{{ HADOOP_COMMON_VERSION }}-src.tar.gz"
+  url: "https://archive.apache.org/dist/hadoop/common/hadoop-{{ HADOOP_COMMON_VERSION }}/hadoop-{{ HADOOP_COMMON_VERSION }}-src.tar.gz"
   sha256sum: 227785DC6E3E6EF8CFD64393B305D09078A209703C9C01910A1BDDCF86BE3054
 
 hadoop_common_java_home: "{{ oraclejdk_link }}"
