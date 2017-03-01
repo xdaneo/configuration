@@ -1,0 +1,49 @@
+---
+- name: checkout Graphite API
+  git: repo=https://github.com/brutasse/graphite-api.git
+       dest={{ GRAPHITE_ROOT }}/src/api
+       version={{ GRAPHITE_API_VERSION }}
+
+- name: install Graphite API dependencies
+  command: "{{ GRAPHITE_ROOT }}/bin/pip install -r {{ GRAPHITE_ROOT }}/src/api/requirements.txt"
+
+- name: install Graphite API
+  command: "{{ GRAPHITE_ROOT }}/bin/python setup.py install"
+  args:
+    chdir: "{{ GRAPHITE_ROOT }}/src/api"
+
+- name: install Gunicorn
+  command: "{{ GRAPHITE_ROOT }}/bin/pip install gunicorn"
+  args:
+    creates: "{{ GRAPHITE_ROOT }}/bin/gunicorn"
+
+- name: create configuration directory for Graphite API
+  file: path={{ GRAPHITE_ROOT }}/conf
+        state=directory
+        owner=graphite
+        group=graphite
+
+- name: configure Graphite API
+  template: src=graphite-api/conf/graphite-api.yml.j2
+            dest={{ GRAPHITE_ROOT }}/conf/graphite-api.yml
+            owner=graphite
+            group=graphite
+            mode=0644
+  notify:
+    - Restart Graphite
+
+- name: configure systemd unit files for Graphite API
+  template: src=graphite-api/systemd/{{ item }}.j2
+            dest=/etc/systemd/system/{{ item }}
+            mode=0644
+  with_items:
+    - graphite-api.socket
+    - graphite-api.service
+  notify:
+    - Restart Graphite
+
+- name: reload systemd unit configuration
+  command: systemctl daemon-reload
+
+- name: enable/start Graphite API services
+  service: name=graphite-api enabled=yes state=started

@@ -1,0 +1,11 @@
+---
+- name: checkout Whisper
+  git: repo=https://github.com/graphite-project/whisper.git
+       dest={{ GRAPHITE_ROOT }}/src/whisper
+       version={{ GRAPHITE_WHISPER_VERSION }}
+
+- name: install Whisper
+  command: "{{ GRAPHITE_ROOT }}/bin/python setup.py install"
+  args:
+    chdir: "{{ GRAPHITE_ROOT }}/src/whisper"
+    creates: "{{ GRAPHITE_ROOT }}/bin/whisper-create.py"

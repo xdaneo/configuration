@@ -1,0 +1,20 @@
+[Unit]
+Description=Graphite-API service
+Requires=graphite-api.socket
+
+[Service]
+StandardOutput=syslog
+StandardError=syslog
+User=graphite
+Group=graphite
+WorkingDirectory={{ GRAPHITE_ROOT }}
+Environment=GRAPHITE_API_CONFIG={{ GRAPHITE_ROOT }}/conf/graphite-api.yaml
+ExecStart={{ GRAPHITE_ROOT }}/bin/gunicorn -w 2 graphite_api.app:app
+Restart=on-failure
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+PrivateTmp=true
+LimitNOFILE=128000
+
+[Install]
+WantedBy=multi-user.target

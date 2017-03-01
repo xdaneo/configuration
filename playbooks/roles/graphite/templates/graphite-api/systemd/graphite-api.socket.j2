@@ -1,0 +1,11 @@
+[Unit]
+Description=graphite-api socket
+
+[Socket]
+SocketUser=graphite
+SocketGroup=graphite
+ListenStream=/opt/graphite/run/graphite-api.sock
+ListenStream=127.0.0.1:{{ GRAPHITE_API_WSGI_PORT }}
+
+[Install]
+WantedBy=sockets.target

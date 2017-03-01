@@ -1,0 +1,6 @@
+---
+- name: Restart Carbon
+  service: name=carbon-cache state=restarted
+
+- name: Restart Graphite
+  service: name=graphite-api state=restarted

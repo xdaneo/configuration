@@ -1,0 +1,49 @@
+---
+- name: checkout Carbon
+  git: repo=https://github.com/graphite-project/carbon.git
+       dest={{ GRAPHITE_ROOT }}/src/carbon
+       version={{ GRAPHITE_CARBON_VERSION }}
+
+- name: install Carbon dependencies
+  command: "{{ GRAPHITE_ROOT }}/bin/pip install -r {{ GRAPHITE_ROOT }}/src/carbon/requirements.txt"
+
+- name: install Carbon
+  command: "{{ GRAPHITE_ROOT }}/bin/python setup.py install"
+  args:
+    chdir: "{{ GRAPHITE_ROOT }}/src/carbon"
+    creates: "{{ GRAPHITE_ROOT }}/bin/carbon-cache.py"
+
+- name: configure Carbon and storage
+  template: src=carbon/conf/{{ item }}.conf.j2
+            dest={{ GRAPHITE_ROOT }}/conf/{{ item }}.conf
+  with_items:
+    - carbon
+    - storage-schemas
+    - storage-aggregation
+  notify:
+    - Restart Carbon
+
+- name: set permissions for storage
+  file: path={{ GRAPHITE_ROOT }}/storage
+        owner=carbon
+        group=graphite
+        recurse=yes
+        state=directory
+
+- name: set permissions for logging
+  file: path=/var/log/carbon
+        owner=carbon
+        group=graphite
+        state=directory
+
+- name: configure Carbon service definition
+  template: src=carbon/systemd/carbon-cache.service.j2
+            dest=/etc/systemd/system/carbon-cache.service
+  notify:
+    - Restart Carbon
+
+- name: reload systemd unit configuration
+  command: systemctl daemon-reload
+
+- name: enable/start the Carbon service
+  service: name=carbon-cache enabled=yes state=started

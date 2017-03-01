@@ -1,0 +1,68 @@
+---
+- name: create Graphite user group
+  group: name=graphite
+         state=present
+
+- name: create service account for Graphite
+  user: name=graphite
+        system=yes
+        home={{ GRAPHITE_ROOT }}
+        shell=/bin/false
+        group=graphite
+        state=present
+
+- name: create service account for Carbon
+  user: name=carbon
+        system=yes
+        home={{ GRAPHITE_ROOT }}
+        shell=/bin/false
+        group=graphite
+        state=present
+
+- name: create common Graphite directories
+  file: path={{ GRAPHITE_ROOT }}/run
+        state=directory
+        owner=graphite
+        group=graphite
+        mode=0775
+
+- name: create Graphite source directories
+  file: path={{ GRAPHITE_ROOT }}/src
+        state=directory
+        owner=graphite
+        group=graphite
+
+- name: install Graphite dependencies
+  apt: pkg={{ item }}
+       state=present
+  with_items:
+    - libcairo2-dev
+    - libffi-dev
+    - pkg-config
+    - fontconfig
+
+- name: create virtualenv directory for Graphite
+  file: path={{ GRAPHITE_ROOT }}/venv
+        state=directory
+
+- name: initialize virtualenv for Graphite
+  command: "virtualenv {{ GRAPHITE_ROOT }}"
+  args:
+    creates: "{{ GRAPHITE_ROOT }}/bin/activate"
+
+- include: whisper.yml
+- include: carbon.yml
+- include: graphite-api.yml
+
+- name: Find all example configuration files
+  find:
+    paths: "{{ GRAPHITE_ROOT }}/conf"
+    patterns: "*.example"
+  register: tmp_glob
+
+- name: Cleanup example files
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items:
+    - "{{ tmp_glob.files }}"
