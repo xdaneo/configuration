@@ -8,10 +8,10 @@ StandardOutput=syslog
 StandardError=syslog
 User=carbon
 Group=graphite
-ExecStart={{ GRAPHITE_ROOT }}/bin/carbon-cache.py --config={{ GRAPHITE_ROOT }}/conf/carbon.conf --pidfile={{ GRAPHITE_ROOT }}/run/carbon-cache.pid --logdir=/var/log/carbon/ start
+ExecStart={{ graphite_root }}/bin/carbon-cache.py --config={{ graphite_root }}/conf/carbon.conf --pidfile={{ graphite_root }}/run/carbon-cache.pid --logdir=/var/log/carbon/ start
 ExecReload=/bin/kill -USR1 $MAINPID
-ExecStop={{ GRAPHITE_ROOT }}/bin/carbon-cache.py --pidfile={{ GRAPHITE_ROOT }}/run/carbon-cache.pid stop
-PIDFile={{ GRAPHITE_ROOT }}/run/carbon-cache.pid
+ExecStop={{ graphite_root }}/bin/carbon-cache.py --pidfile={{ graphite_root }}/run/carbon-cache.pid stop
+PIDFile={{ graphite_root }}/run/carbon-cache.pid
 PrivateTmp=true
 LimitNOFILE=128000
 

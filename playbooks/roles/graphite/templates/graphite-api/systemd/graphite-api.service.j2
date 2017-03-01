@@ -7,9 +7,9 @@ StandardOutput=syslog
 StandardError=syslog
 User=graphite
 Group=graphite
-WorkingDirectory={{ GRAPHITE_ROOT }}
-Environment=GRAPHITE_API_CONFIG={{ GRAPHITE_ROOT }}/conf/graphite-api.yaml
-ExecStart={{ GRAPHITE_ROOT }}/bin/gunicorn -w 2 graphite_api.app:app
+WorkingDirectory={{ graphite_root }}
+Environment=GRAPHITE_API_CONFIG={{ graphite_root }}/conf/graphite-api.yaml
+ExecStart={{ graphite_root }}/bin/gunicorn -w 2 graphite_api.app:app
 Restart=on-failure
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s TERM $MAINPID

@@ -1,21 +1,21 @@
 ---
 - name: checkout Carbon
   git: repo=https://github.com/graphite-project/carbon.git
-       dest={{ GRAPHITE_ROOT }}/src/carbon
+       dest={{ graphite_root }}/src/carbon
        version={{ GRAPHITE_CARBON_VERSION }}
 
 - name: install Carbon dependencies
-  command: "{{ GRAPHITE_ROOT }}/bin/pip install -r {{ GRAPHITE_ROOT }}/src/carbon/requirements.txt"
+  command: "{{ graphite_root }}/bin/pip install -r {{ graphite_root }}/src/carbon/requirements.txt"
 
 - name: install Carbon
-  command: "{{ GRAPHITE_ROOT }}/bin/python setup.py install"
+  command: "{{ graphite_root }}/bin/python setup.py install"
   args:
-    chdir: "{{ GRAPHITE_ROOT }}/src/carbon"
-    creates: "{{ GRAPHITE_ROOT }}/bin/carbon-cache.py"
+    chdir: "{{ graphite_root }}/src/carbon"
+    creates: "{{ graphite_root }}/bin/carbon-cache.py"
 
 - name: configure Carbon and storage
   template: src=carbon/conf/{{ item }}.conf.j2
-            dest={{ GRAPHITE_ROOT }}/conf/{{ item }}.conf
+            dest={{ graphite_root }}/conf/{{ item }}.conf
   with_items:
     - carbon
     - storage-schemas
@@ -24,7 +24,7 @@
     - Restart Carbon
 
 - name: set permissions for storage
-  file: path={{ GRAPHITE_ROOT }}/storage
+  file: path={{ graphite_root }}/storage
         owner=carbon
         group=graphite
         recurse=yes

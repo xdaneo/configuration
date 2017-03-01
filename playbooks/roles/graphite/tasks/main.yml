@@ -6,7 +6,7 @@
 - name: create service account for Graphite
   user: name=graphite
         system=yes
-        home={{ GRAPHITE_ROOT }}
+        home={{ graphite_root }}
         shell=/bin/false
         group=graphite
         state=present
@@ -14,20 +14,20 @@
 - name: create service account for Carbon
   user: name=carbon
         system=yes
-        home={{ GRAPHITE_ROOT }}
+        home={{ graphite_root }}
         shell=/bin/false
         group=graphite
         state=present
 
 - name: create common Graphite directories
-  file: path={{ GRAPHITE_ROOT }}/run
+  file: path={{ graphite_root }}/run
         state=directory
         owner=graphite
         group=graphite
         mode=0775
 
 - name: create Graphite source directories
-  file: path={{ GRAPHITE_ROOT }}/src
+  file: path={{ graphite_root }}/src
         state=directory
         owner=graphite
         group=graphite
@@ -42,13 +42,13 @@
     - fontconfig
 
 - name: create virtualenv directory for Graphite
-  file: path={{ GRAPHITE_ROOT }}/venv
+  file: path={{ graphite_root }}/venv
         state=directory
 
 - name: initialize virtualenv for Graphite
-  command: "virtualenv {{ GRAPHITE_ROOT }}"
+  command: "virtualenv {{ graphite_root }}"
   args:
-    creates: "{{ GRAPHITE_ROOT }}/bin/activate"
+    creates: "{{ graphite_root }}/bin/activate"
 
 - include: whisper.yml
 - include: carbon.yml
@@ -56,7 +56,7 @@
 
 - name: Find all example configuration files
   find:
-    paths: "{{ GRAPHITE_ROOT }}/conf"
+    paths: "{{ graphite_root }}/conf"
     patterns: "*.example"
   register: tmp_glob
 

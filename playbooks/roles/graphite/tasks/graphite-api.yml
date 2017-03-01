@@ -1,31 +1,31 @@
 ---
 - name: checkout Graphite API
   git: repo=https://github.com/brutasse/graphite-api.git
-       dest={{ GRAPHITE_ROOT }}/src/api
+       dest={{ graphite_root }}/src/api
        version={{ GRAPHITE_API_VERSION }}
 
 - name: install Graphite API dependencies
-  command: "{{ GRAPHITE_ROOT }}/bin/pip install -r {{ GRAPHITE_ROOT }}/src/api/requirements.txt"
+  command: "{{ graphite_root }}/bin/pip install -r {{ graphite_root }}/src/api/requirements.txt"
 
 - name: install Graphite API
-  command: "{{ GRAPHITE_ROOT }}/bin/python setup.py install"
+  command: "{{ graphite_root }}/bin/python setup.py install"
   args:
-    chdir: "{{ GRAPHITE_ROOT }}/src/api"
+    chdir: "{{ graphite_root }}/src/api"
 
 - name: install Gunicorn
-  command: "{{ GRAPHITE_ROOT }}/bin/pip install gunicorn"
+  command: "{{ graphite_root }}/bin/pip install gunicorn"
   args:
-    creates: "{{ GRAPHITE_ROOT }}/bin/gunicorn"
+    creates: "{{ graphite_root }}/bin/gunicorn"
 
 - name: create configuration directory for Graphite API
-  file: path={{ GRAPHITE_ROOT }}/conf
+  file: path={{ graphite_root }}/conf
         state=directory
         owner=graphite
         group=graphite
 
 - name: configure Graphite API
   template: src=graphite-api/conf/graphite-api.yml.j2
-            dest={{ GRAPHITE_ROOT }}/conf/graphite-api.yml
+            dest={{ graphite_root }}/conf/graphite-api.yml
             owner=graphite
             group=graphite
             mode=0644
